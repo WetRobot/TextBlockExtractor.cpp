@@ -3,33 +3,12 @@
 #include <functional>
 #include <vector>
 #include <fstream>
-#include <iostream>
 
-// utils -----------------------------------------------------------------------
-bool is_in(std::string x, std::vector<std::string> pool) {
-    bool out = false;
-    for (std::string pool_elem : pool) {
-        if (pool_elem == x) {
-            out = true;
-            break;
-        }
-    }
-    return(out);
-}
+#include "utils.hpp"
+#include "store.hpp"
 
-int match(std::vector<int> x, int y) {
-    int m = -99;
-    for (int i = 0; i < x.size(); i++) {
-        if (x[i] == y) {
-            m = i;
-        }
-    }
-    return(m);
-}
-
-
-// extract_keyed_comment_blocks ------------------------------------------------
-void extract_keyed_comment_blocks(
+// extract ---------------------------------------------------------------------
+void extract(
     std::string                                             file_path,
     std::function<bool(std::string)>                        doc_begins,
     std::function<bool(std::string)>                        doc_includes,
@@ -41,7 +20,8 @@ void extract_keyed_comment_blocks(
     std::function<void(std::string line, std::string key)>  line_store,
     std::function<void(int line, std::string key, bool is_first)>  line_no_store
 ) {
-    std::ifstream file(file_path);
+    std::ifstream file_conn;
+    file_conn.open(file_path);
 
     std::vector<std::string> key_by_block(0);
 
@@ -49,7 +29,7 @@ void extract_keyed_comment_blocks(
     std::vector<std::string>    active_key_set(0);
     int line_no = -1;
     std::string line;
-    while (std::getline(file, line)) {
+    while (std::getline(file_conn, line)) {
         line_no += 1;
         // @codedoc_chunk extract_keyed_comment_blocks
         // Function `extract_keyed_comment_blocks` goes through the file
@@ -117,29 +97,5 @@ void extract_keyed_comment_blocks(
             }
          } // i for loop
     } // while
-}
-
-// store funs ------------------------------------------------------------------
-void store_line_to_filesystem(
-    std::string line,
-    std::string key
-) {
-    std::string output_file_path = "./output/" + key + ".txt";
-    std::fstream file_conn;
-    file_conn.open(output_file_path, std::ios_base::app | std::ios_base::in);
-    if (file_conn.is_open()) {
-        file_conn << line << std::endl;
-    }
-}
-void store_line_no_to_filesystem(
-    int line_no,
-    std::string key,
-    bool is_end
-) {
-    std::string output_file_path = "./output/" + key + ".txt";
-    std::fstream file_conn;
-    file_conn.open(output_file_path, std::ios_base::app | std::ios_base::in);
-    if (file_conn.is_open()) {
-        file_conn << line_no << std::endl;
-    }
+    file_conn.close();
 }
