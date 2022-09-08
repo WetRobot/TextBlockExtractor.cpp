@@ -1,3 +1,4 @@
 .vscode
 output
 TextBlockExtractor.cpp.code-workspace
+bin
