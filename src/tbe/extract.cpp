@@ -18,7 +18,7 @@ void extract(
     std::function<std::string(std::string)>                 key_extract,
     std::function<std::string(std::string)>                 line_extract,
     std::function<void(std::string line, std::string key)>  line_store,
-    std::function<void(int line, std::string key, bool is_first)>  line_no_store
+    std::function<void(int line_no,std::string key,bool is_first)> line_no_store
 ) {
     std::ifstream file_conn;
     file_conn.open(file_path);

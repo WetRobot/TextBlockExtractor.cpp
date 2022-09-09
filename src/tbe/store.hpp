@@ -1,13 +1,11 @@
 
 #include <string>
+#include <functional>
 
-void store_line_to_filesystem(
-    std::string line,
-    std::string key
+std::function<void(std::string line, std::string key)> store_line_to_filesystem_factory(
+    std::string output_dir_path
 );
 
-void store_line_no_to_filesystem(
-    int line_no,
-    std::string key,
-    bool is_end
+std::function<void(int line_no, std::string key)> store_line_no_to_filesystem_factory(
+    std::string output_dir_path
 );
