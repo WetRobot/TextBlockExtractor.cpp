@@ -1,12 +1,10 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <functional>
 
-auto store_line_to_filesystem_factory(
-    std::string output_dir_path
-) {
-    return [&](std::string line, std::string key) -> void 
+namespace store{
+auto store_line_to_filesystem_factory(std::string output_dir_path) {
+    return [&](std::string &line, std::string &key) -> void 
     {
         std::string output_file_path = output_dir_path + key + ".txt";
         std::fstream file_conn;
@@ -17,10 +15,8 @@ auto store_line_to_filesystem_factory(
     };
 }
 
-auto store_line_no_to_filesystem_factory(
-    std::string output_dir_path
-) {
-    return [&](int line_no, std::string key, bool is_end) 
+auto store_line_no_to_filesystem_factory(std::string output_dir_path) {
+    return [&](int &line_no, std::string &key, bool &is_end) 
     {
         std::string output_file_path = output_dir_path + key + ".txt";
         std::fstream file_conn;
@@ -29,4 +25,5 @@ auto store_line_no_to_filesystem_factory(
             file_conn << line_no << std::endl;
         }
     };
+}
 }

@@ -5,20 +5,19 @@
 #include <fstream>
 
 #include "utils.hpp"
-#include "store.hpp"
 
-// extract ---------------------------------------------------------------------
+namespace extract {
 void extract(
-    std::string                                             file_path,
-    std::function<bool(std::string)>                        doc_begins,
-    std::function<bool(std::string)>                        doc_includes,
-    std::function<bool(std::string line, std::string key)>  doc_ends,
-    std::function<bool(std::string)>                        doc_ended,
-    std::function<bool(std::string)>                        key_allowed,
-    std::function<std::string(std::string)>                 key_extract,
-    std::function<std::string(std::string)>                 line_extract,
-    std::function<void(std::string line, std::string key)>  line_store,
-    std::function<void(int line_no,std::string key,bool is_first)> line_no_store
+    std::string                                             &file_path,
+    std::function<bool(std::string)>                        &doc_begins,
+    std::function<bool(std::string)>                        &doc_includes,
+    std::function<bool(std::string line, std::string key)>  &doc_ends,
+    std::function<bool(std::string)>                        &doc_ended,
+    std::function<bool(std::string)>                        &key_allowed,
+    std::function<std::string(std::string)>                 &key_extract,
+    std::function<std::string(std::string)>                 &line_extract,
+    std::function<void(std::string line, std::string key)>  &line_store,
+    std::function<void(int line_no,std::string key,bool is_first)> &line_no_store
 ) {
     std::ifstream file_conn;
     file_conn.open(file_path);
@@ -57,7 +56,7 @@ void extract(
         bool is_allowed_key = key_allowed(key);
         bool is_key_line = is_allowed_key && key != "" && key != line;
         bool is_begin = doc_begins(line);
-        is_begin = is_begin && !is_in(key, active_key_set);
+        is_begin = is_begin && !utils::is_in(key, active_key_set);
         if (is_begin) {
             // @codedoc_chunk extract_keyed_comment_blocks
             // If `doc_begins` has returned `true` and the currently extracted
@@ -98,4 +97,6 @@ void extract(
          } // i for loop
     } // while
     file_conn.close();
+}
+
 }

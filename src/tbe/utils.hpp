@@ -1,2 +1,7 @@
-bool is_in(std::string x, std::vector<std::string> pool);
-int match(std::vector<int> x, int y);
+namespace utils{
+template<typename T, typename Allocator>
+int match(T &x, std::vector<T, Allocator> &y);
+
+template<typename T, typename Allocator>
+bool is_in(T &x, std::vector<T, Allocator> &y);
+}
