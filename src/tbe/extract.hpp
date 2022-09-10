@@ -87,14 +87,6 @@ void extract(
             int new_section_no = key_by_section.size();
             active_section_no_set.push_back(new_section_no);
             active_section_key_set.push_back(key);
-        } 
-
-        bool is_inactive_key = is_allowed_key && !in_active_set;
-        if (is_inactive_key) {
-            // @doc extract
-            // If the extracted key was in the set of active keys, it is assumed
-            // that that section ends at this line.
-            
         }
         
         // @doc extract::section_starts
@@ -104,34 +96,38 @@ void extract(
             // @doc extract::line_no_store
             // 
             // The first line number is stored by calling `line_no_store`
+            // when `section_starts` returns `true` and when the current
+            // key is not active.
+            line_no_store(line_no, key, true);
             continue; // done here, go to next line
         }
-
+        
+        std::vector<int> keep_active_section_indices(0);
         for (int i = 0; i++; i < active_section_no_set.size()) {
             // @doc extract
             // We loop over each currently active section. 
-            int section_no = active_section_no_set[i];
-            std::string key = key_by_section[section_no];
-            bool is_stopper = section_stops(line, key);
+            int active_section_no = active_section_no_set[i];
+            std::string active_section_key = active_section_key_set[i];
+            bool is_stopper = section_stops(line, active_section_key);
             if (is_stopper) {
-                /* 
-                @doc extract
-                If the current line ends the section, the section is removed
-                from the set of currently active sections. Its last line
-                number is stored by calling `line_no_store`.
-                */
                 line_no_store(line_no, key, false);
-                int m = utils::match(key, active_section_key_set);
-                active_section_no_set.erase(active_section_no_set.begin() + m);
-                active_section_key_set.erase(active_section_key_set.begin() +m);
-                continue; // done here, go to next section_no
+            } else {
+                keep_active_section_indices.push_back(i);
             }
-            bool store = is_included && !is_key_line && !is_starter && !is_stopper;
+            bool store = is_included && !is_starter && !is_stopper;
             if (store) {
                 std::string extracted_line = line_extract(line);
                 line_store(extracted_line, key);
             }
          } // i for loop
+         active_section_no_set = utils::vector_subset(
+            active_section_no_set, 
+            keep_active_section_indices
+        );
+        active_section_key_set = utils::vector_subset(
+            active_section_key_set, 
+            keep_active_section_indices
+        );
     } // while
     file_conn.close();
 }
