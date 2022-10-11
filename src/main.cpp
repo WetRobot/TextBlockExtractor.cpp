@@ -23,5 +23,16 @@ int main(int argc, char* argv[]) {
     } else {
         std::printf("utils::is_in worked\n");
     }
+    // TODO: need to implement block vs chunk section end detection.
+    // block: end when the same key is found for the second time.
+    // chunk: end when 
+    extract_bl_ch_with_re_into_fs(
+        "examples/input1.cpp",
+        std::regex("[ ]*//"),
+        std::regex("[ ]*//"),
+        std::regex("(^[ ]*//[ ]*@[a-z]+[ ]+)(.+)($)"),
+        std::regex("(^[ ]*//[ ]*)(.+)($)"),
+        "./out/"
+    )
     return(0);
 }
