@@ -3,6 +3,6 @@ rm -rf bin
 mkdir bin
 mkdir bin/static
 
-g++ src/main.cpp -o bin/lbe
+g++ src/main.cpp -o bin/tse
 
-./bin/lbe
+./bin/tse

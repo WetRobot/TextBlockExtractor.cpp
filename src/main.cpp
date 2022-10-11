@@ -2,9 +2,9 @@
 #include <iostream>
 #include <vector>
 
-#include "tbe/extract.hpp"
-#include "tbe/store.hpp"
-#include "tbe/utils.hpp"
+#include "tse/extract.hpp"
+#include "tse/store.hpp"
+#include "tse/utils.hpp"
 
 int main(int argc, char* argv[]) {
     int m_x = 0;
