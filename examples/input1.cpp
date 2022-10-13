@@ -17,14 +17,24 @@
 // 17
 // @block key_5
 
-// @doc_start key_7
+// @start key_7
 // @chunk key_6
 // 22
-// @doc_stop key_7
+// @stop key_7
 
-// @block key_8
+// @start key_8
 // 26
 int my_var = 1;
 // 28
-// @block key_8
+// @stop key_8
+
+/* @chunk key_9
+32
+*/
+
+/* 
+@block key_10
+32
+@block key_10
+*/
 

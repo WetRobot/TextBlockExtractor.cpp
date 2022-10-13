@@ -26,13 +26,25 @@ int main(int argc, char* argv[]) {
     // TODO: need to implement block vs chunk section end detection.
     // block: end when the same key is found for the second time.
     // chunk: end when 
-    extract_bl_ch_with_re_into_fs(
+    // extract_bl_ch_with_re_into_fs(
+    //     "examples/input1.cpp",
+    //     std::regex("[ ]*//"),
+    //     std::regex("[ ]*//"),
+    //     std::regex("(^[ ]*//[ ]*@[a-z]+[ ]+)(.+)($)"),
+    //     std::regex("(^[ ]*//[ ]*)(.+)($)"),
+    //     "./out/"
+    // )
+    extract = extract::extract_re_factory(
+        {"@block", "@start", "@chunk"},
+        {"@block", "@stop", ""},
+        {true, true, false}
+    );
+    extract(
         "examples/input1.cpp",
-        std::regex("[ ]*//"),
-        std::regex("[ ]*//"),
-        std::regex("(^[ ]*//[ ]*@[a-z]+[ ]+)(.+)($)"),
-        std::regex("(^[ ]*//[ ]*)(.+)($)"),
-        "./out/"
+
     )
+
+    extract::StringRegexPair srp = extract::StringRegexPair("wat");
+    std::cout << srp.s << "\n";
     return(0);
 }

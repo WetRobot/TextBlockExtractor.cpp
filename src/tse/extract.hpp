@@ -44,8 +44,6 @@ void extract(
     bool section_stopped_step_ago = false;
     std::string extracted_line = "";
     while (std::getline(file_conn, line)) {
-        std::string tmp = "";
-        std::cin >> tmp;
         line_no += 1;
         // @doc extract
         // `extract` goes through the file at `file_path` one line at a time.
@@ -134,140 +132,46 @@ void extract(
     file_conn.close();
 }
 
-// extract_bl_ch ---------------------------------------------------------------
-void extract_bl_ch(
-    std::string                                                        &file_path,
+// StringRegexPair -------------------------------------------------------------
+struct StringRegexPair {
+  std::string s;
+  std::regex  r;
+
+  StringRegexPair(std::string s):
+  s(s), r(std::regex(s)) {}
+};
+
+// extract_re_factory ----------------------------------------------------------
+
+/*
+@examples
+extract = extract::extract_re_factory(
+    {"@block", "@start", "@chunk"},
+    {"@block", "@stop", ""},
+    {false, true, false}
+);
+extract(
+    "examples/input1.cpp"
+)
+*/
+
+auto extract_re_factory(
+    std::vector<std::string> &section_start,
+    std::vector<std::string> &section_stop,
+    std::vector<bool>        &interruptible,
     std::function<void(std::string &line, bool out)>                   &cb_dont_skip_line,
     std::function<void(std::string &line, std::string &key, bool out)> &cb_section_includes,
+    std::function<void(std::string &line, std::string &key, bool out)> &cb_section_stops_here,
+    std::function<void(std::string &line, std::string &key, bool out)> &cb_section_stopped_step_ago,
     std::function<void(std::string &line, std::string out)> &cb_key_extract,
     std::function<void(std::string &line, std::string out)> &cb_line_extract,
     std::function<void(std::string &line, std::string &key)>&cb_line_store,
     std::function<void(int &line_no, std::string &key, bool &is_first)> &cb_line_no_store
 ) {
-    // TODO: write this.
-}
-
-// regex-based -----------------------------------------------------------------
-    // std::function<void(std::string &line, std::string out)> &cb_line_extract,
-    // std::function<void(std::string &line, std::string &key)>&cb_line_store,
-    // std::function<void(int &line_no, std::string &key, bool &is_first)> &cb_line_no_store
-
-void re_detect(std::regex r, std::string s, bool out) {
-    std::smatch m;
-    if (std::regex_search(s.begin(), s.end(), m, r)) {
-        out = true;
-    } else {
-        out = false;
-    }
-}
-void re_extract_first(std::regex r, std::string s, std::string out) {    
-    std::smatch m;
-    if (std::regex_search(s.begin(), s.end(), m, r)) {
-        out = m[1];
-    } else {
-        out = "";
-    }
-}
-
-std::function<void(std::string &line, bool out)> 
-re_factory_cb_dont_skip_line(std::regex re_dont_skip_line) {
-    return [&](std::string &line, bool out) -> void {
-        re_detect(re_dont_skip_line, line, out);
+    return [&](std::string &file_path) -> void 
+    {
+        
     };
 }
 
-std::function<void(std::string &line, std::string &key, bool out)>
-re_factory_cb_section_includes(std::regex re_section_includes) {
-    return [&](std::string &line, std::string &key, bool out) -> void {
-        re_detect(re_section_includes, line, out);
-    };
 }
-
-std::function<void(std::string &line, std::string &key, bool out)>
-re_factory_cb_section_stops_here(std::regex re_section_stops_here) {
-    return [&](std::string &line, std::string &key, bool out) -> void {
-        re_detect(re_section_stops_here, line, out);
-    };
-}
-
-std::function<void(std::string &line, std::string &key, bool out)>
-re_factory_cb_section_stopped_step_ago(std::regex re_section_stopped_step_ago) {
-    return [&](std::string &line, std::string &key, bool out) -> void {
-        re_detect(re_section_stopped_step_ago, line, out);
-    };
-}
-
-std::function<void(std::string &line, std::string out)>
-re_factory_cb_key_extract(std::regex re_key_extract) {
-    return [&](std::string &line, std::string out) -> void {
-        re_extract_first(re_key_extract, line, out);
-    };
-}
-
-std::function<void(std::string &line, std::string out)>
-re_factory_cb_line_extract(std::regex re_line_extract) {
-    return [&](std::string &line, std::string out) -> void {
-        re_extract_first(re_line_extract, line, out);
-    };
-}
-
-void extract_re(
-    std::string &file_path,
-    std::regex &re_dont_skip_line,
-    std::regex &re_section_includes,
-    std::regex &re_section_stops_here,
-    std::regex &re_section_stopped_step_ago,
-    std::regex &re_key_extract,
-    std::regex &re_line_extract,
-    std::function<void(std::string &line, std::string &key)> &cb_line_store,
-    std::function<void(int &line_no, std::string &key, bool &is_first)> &cb_line_no_store
-) {
-    extract(
-        re_factory_cb_dont_skip_line(re_dont_skip_line),
-        re_factory_cb_section_includes(re_section_includes),
-        re_factory_cb_section_stops_here(re_section_stops_here),
-        re_factory_cb_section_stopped_step_ago(re_section_stopped_step_ago),
-        re_factory_cb_key_extract(re_key_extract),
-        re_factory_cb_line_extract(re_line_extract),
-        cb_line_store,
-        cb_line_no_store
-    );
-}
-
-
-void extract_with_re_into_fs(
-    std::string &file_path,
-    std::regex &re_dont_skip_line,
-    std::regex &re_section_includes,
-    std::regex &re_section_stops_here,
-    std::regex &re_section_stopped_step_ago,
-    std::regex &re_key_extract,
-    std::regex &re_line_extract,
-    std::string &output_dir_path
-) {
-    extract(
-        re_factory_cb_dont_skip_line(re_dont_skip_line),
-        re_factory_cb_section_includes(re_section_includes),
-        re_factory_cb_section_stops_here(re_section_stops_here),
-        re_factory_cb_section_stopped_step_ago(re_section_stopped_step_ago),
-        re_factory_cb_key_extract(re_key_extract),
-        re_factory_cb_line_extract(re_line_extract),
-        store::factory_store_line_to_filesystem(output_dir_path),
-        store::factory_store_line_no_to_filesystem(output_dir_path)
-    );
-}
-
-// extract_bl_ch_with_re_into_fs -----------------------------------------------
-extract_bl_ch_with_re_into_fs(    
-    std::string &file_path,
-    std::regex &re_dont_skip_line,
-    std::regex &re_section_includes,
-    std::regex &re_key_extract,
-    std::regex &re_line_extract,
-    std::string &output_dir_path
-) {
-    // TODO
-}
-
-}
-#endif
